@@ -1,8 +1,24 @@
 /* A simple stylesheet  */
 
-h2 {
-	text-align: center;
+video {
+	left: 50%;
+	height: 520px;
+	width: 810px;
+	padding-left: 320px;
+}
+
+#title {
 	font-family: Verdana, Geneva, sans-serif;
-	font-size: 30px;
-	font-style: normal;
+	text-align: center;
+	color: green;
+}
+
+h3 {
+	font-family: Verdana, Geneva, sans-serif;
+	text-align: center;
+	color: green;
+}
+
+body {
+	background-color: #21442b;
 }
