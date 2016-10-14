@@ -13,8 +13,89 @@
 <video src="https://www.cs.tufts.edu/comp/20/classic.mp4" id="classic_video" controls></video>
 <div id="movie_quotes"></div>
 
-<script>
-	// Complete this section and create a CSS file named style.css
+<script type="text/javascript">
+	var video = document.getElementById("classic_video");
+	var movie_quotes = document.getElementById("movie_quotes");
+	var subtitles = document.createElement("p");
+	movie_quotes.appendChild(subtitles);
+	video.addEventListener("timeupdate", function() {
+
+		var currentTime = video.currentTime;
+		if (movie_quotes.childNodes[1]) {
+            movie_quotes.removeChild(movie_quotes.childNodes[1]);
+        }
+
+		if (currentTime > 25 && currentTime < 26) {
+			subtitles.innerHTML = "Igor: DR. FRANKENSTEIN?!?!?";
+		}
+		else if (currentTime > 31 && currentTime < 32.5) {
+			subtitles.innerHTML = "Dr. Frederick Frankenstein: Frokensteen.";
+		}
+		else if (currentTime > 6.5 && currentTime < 16.8) {
+			subtitles.innerHTML = "Igor: You're putting me on.";
+		}
+		else if (currentTime > 16.8 && currentTime < 18) {
+			subtitles.innerHTML = "Dr. Frederick Frankenstein: No, it pronounced, "Frokensteen".";
+		}
+		else if (currentTime > 18 && currentTime < 20) {
+			subtitles.innerHTML = "Igor: Do you also say Froaderick?";
+		}
+		else if (currentTime > 20 && currentTime < 22.5) {
+			subtitles.innerHTML = "Dr. Frederick Frankenstein: No . . . "Frederick."";
+		}
+		else if (currentTime > 22.5 && currentTime < 24.5) {
+			subtitles.innerHTML = "Igor: Well, why isn't it 'Froaderick Frokensteen'?";
+		}
+		else if (currentTime > 24.5 && currentTime < 26) {
+			subtitles.innerHTML = "Dr. Frederick Frankenstein: It isn't, it's "Frederick Frokensteen"";
+		}
+		else if (currentTime > 26 && currentTime < 32.3) {
+			subtitles.innerHTML = "Igor: I see.";
+		}
+		else if (currentTime > 32.3 && currentTime < 52) {
+			subtitles.innerHTML = "Dr. Frederick Frankenstein: You must be Igor. [He pronounces it ee-gor.]";
+		}
+		else if (currentTime > 32.3 && currentTime < 52) {
+			subtitles.innerHTML = "Igor: No, it's pronounced "eye-gor."";
+		}
+		else if (currentTime > 32.3 && currentTime < 52) {
+			subtitles.innerHTML = "Dr. Frederick Frankenstein: But they told me it was "ee-gor"...
+";
+		}
+		else if (currentTime > 32.3 && currentTime < 52) {
+			subtitles.innerHTML = "Igor: Well, they were wrong then, weren't they?";
+		}
+		else if (currentTime > 32.3 && currentTime < 52) {
+			subtitles.innerHTML = "Dr. Frederick Frankenstein: Uh, you were sent here by Herr Falkstein, weren't you?";
+		}
+		else if (currentTime > 32.3 && currentTime < 52) {
+			subtitles.innerHTML = "Igor: Yes. My grandfather used to work for your grandfather.";
+		}
+		else if (currentTime > 32.3 && currentTime < 52) {
+			subtitles.innerHTML = "Igor: Yes. My grandfather used to work for your grandfather.";
+		}
+		else if (currentTime > 32.3 && currentTime < 52) {
+			subtitles.innerHTML = "Igor: Yes. My grandfather used to work for your grandfather.";
+		}
+		else if (currentTime > 32.3 && currentTime < 52) {
+			subtitles.innerHTML = "Igor: Yes. My grandfather used to work for your grandfather.";
+		}
+
+
+
+
+
+
+
+
+		else if (currentTime > 52) {
+			subtitles.innerHTML = "<h3>Thanks For Watching!</h3>";
+		}
+		else {
+			subtitles.innerHTML ="";
+		}
+		}, false);
+	
 </script>
 </body>
 </html>	
