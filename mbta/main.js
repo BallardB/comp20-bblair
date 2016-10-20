@@ -1,25 +1,64 @@
 
+	var myLat = 0;
+	var myLng = 0;
+	var request = new XMLHttpRequest();
+	var me = new google.maps.LatLng(myLat, myLng);
+	var myOptions = {
+		zoom: 8, // The larger the zoom number, the bigger the zoom	
+		center: me,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+	var map;
+	var marker;
+	var infowindow = new google.maps.InfoWindow();
+			
+	function init()
+	{
+		map = new google.maps.Map(document.getElementById("map"), myOptions);
+		getMyLocation();
+	}
+			
+	function getMyLocation() {
+		if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
+			navigator.geolocation.getCurrentPosition(function(position) {
+				myLat = position.coords.latitude;
+				myLng = position.coords.longitude;
+				renderMap();
+			});
+		}
+		else {
+			alert("Geolocation is not supported by your web browser.  Darn!");
+		}
+	}
 
-function init() {
-	getMyLocation();
-}
+	function renderMap()
+	{
+		me = new google.maps.LatLng(myLat, myLng);
+				
+		// Update map and go there...
+		map.panTo(me);
+	
+		// Create a marker
+		marker = new google.maps.Marker({
+			position: me,
+			title: "Here I Am!"
+		});
+		marker.setMap(map);
+					
+		// Open info window on click of marker
+		google.maps.event.addListener(marker, 'click', function() {
+			infowindow.setContent(marker.title);
+			infowindow.open(map, marker);
+		});
+	}
+		
 
 
 
 
 
-function getMyLocation(){
 
-    if (navigator.geolocation) {
-         navigator.geolocation.getCurrentPosition(showPosition);
-    } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
-    }
-}
 
-function showPosition(position){
-        console.log("got position");
-        console.log("position is LAT: " + position.coords.latitude
-        	"LONG: " + position.coords.longitude);
-        //getWeather(position.coords.latitude, position.coords.longitude);
-}
+
+
+
