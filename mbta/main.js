@@ -4,18 +4,58 @@
 	var request = new XMLHttpRequest();
 	var me = new google.maps.LatLng(myLat, myLng);
 	var myOptions = {
-		zoom: 8, // The larger the zoom number, the bigger the zoom	
+		zoom: 12, // The larger the zoom number, the bigger the zoom	
 		center: me,
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	};
 	var map;
 	var marker;
 	var infowindow = new google.maps.InfoWindow();
+
+	var RedLine = [
+	{ name:'South Station', lat:42.352271, lng:-71.05524200000001},
+	{ name:'Andrew', lat:42.330154, lng: -71.057655},
+	{ name:'Harvard Square', lat:42.373362, lng: -71.118956},
+	{ name:'JFK/UMass', lat:42.320685, lng: -71.052391},
+	{ name:'Savin Hill', lat:42.31129 , lng: -71.053331},
+	{ name:'Park Street', lat:42.35639457 , lng: -71.0624242},
+	{ name:'Broadway', lat:42.342622, lng: -71.056967},
+	{ name:'North Quincy', lat:42.275275, lng: -71.029583},
+	{ name:'Shawmut', lat:42.29312583, lng: -71.06573796000001},
+	{ name:'Davis', lat:42.39674, lng: -71.121815},
+	{ name:'Alewife', lat:42.395428, lng: -71.11914899999999},
+	{ name:'Kendall/MIT', lat:42.36249079, lng: -71.08617653},
+	{ name:'Charles/MGH', lat:42.361166, lng: -71.070628},
+	{ name:'Downtown Crossing', lat:42.355518, lng: -71.060225},
+	{ name:'Quincy Center', lat:42.251809, lng: -71.005409},
+	{ name:'Quincy Adams', lat:42.233391, lng: -71.007153},
+	{ name:'Ashmont', lat:42.284652, lng: -71.06448899999999},
+	{ name:'Wollaston', lat:42.2665139, lng: -71.0203369},
+	{ name:'Fields Corner', lat:42.300093, lng: -71.061667},
+	{ name:'Central Square', lat:42.365486, lng: -71.103802},
+	{ name:'Braintree', lat:42.2078543, lng: -71.0011385},
+	];
+	/**
+		Getter function finds the lat,long data associated with a T-Stop name
+		Args: A station name 
+		Return: Data object corresponding to the station location
+	*/
+	function getStationObject (stationName) {
+
+		for (i = 0; i < RedLine.length; i++){
+			if (RedLine[i].name == stationName){
+				return RedLine[i];
+			}
+		}
+	}
+
+
 			
 	function init()
 	{
 		map = new google.maps.Map(document.getElementById("map"), myOptions);
 		getMyLocation();
+		console.log("lat is: " + getStationObject("South Station").lat + "long is: " + getStationObject("South Station").lng);
 	}
 			
 	function getMyLocation() {
