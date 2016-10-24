@@ -3,6 +3,7 @@
 	var myLng = 0;
 	var request = new XMLHttpRequest();
 	var me = new google.maps.LatLng(myLat, myLng);
+
 	var myOptions = {
 		zoom: 12, // The larger the zoom number, the bigger the zoom	
 		center: me,
@@ -44,7 +45,7 @@
 	{lat: 42.300093, lng: -71.061667},
 	{lat: 42.29312583, lng: -71.06573796000001},
 	{lat: 42.284652, lng: -71.06448899999999}
-	]
+	];
 
 	var preForkPath = new google.maps.Polyline({
 		path: preForkCoords,
@@ -71,29 +72,31 @@
 
 
 	var RedLine = [
-	{ name:'South Station', lat: 42.352271, lng:-71.05524200000001},
-	{ name:'Andrew', lat: 42.330154, lng: -71.057655},
-	{ name:'Porter Square', lat: 42.3884, lng: -71.11914899999999},
-	{ name:'Harvard Square', lat: 42.373362, lng: -71.118956},
-	{ name:'JFK/UMass', lat: 42.320685, lng: -71.052391},
-	{ name:'Savin Hill', lat: 42.31129 , lng: -71.053331},
-	{ name:'Park Street', lat: 42.35639457 , lng: -71.0624242},
-	{ name:'Broadway', lat: 42.342622, lng: -71.056967},
-	{ name:'North Quincy', lat: 42.275275, lng: -71.029583},
-	{ name:'Shawmut', lat: 42.29312583, lng: -71.06573796000001},
-	{ name:'Davis', lat: 42.39674, lng: -71.121815},
-	{ name:'Alewife', lat: 42.395428, lng: -71.142483},
-	{ name:'Kendall/MIT', lat: 42.36249079, lng: -71.08617653},
-	{ name:'Charles/MGH', lat: 42.361166, lng: -71.070628},
-	{ name:'Downtown Crossing', lat: 42.355518, lng: -71.060225},
-	{ name:'Quincy Center', lat: 42.251809, lng: -71.005409},
-	{ name:'Quincy Adams', lat: 42.233391, lng: -71.007153},
-	{ name:'Ashmont', lat: 42.284652, lng: -71.06448899999999},
-	{ name:'Wollaston', lat: 42.2665139, lng: -71.0203369},
-	{ name:'Fields Corner', lat: 42.300093, lng: -71.061667},
-	{ name:'Central Square', lat: 42.365486, lng: -71.103802},
-	{ name:'Braintree', lat: 42.2078543, lng: -71.0011385}
+	{ sname:'South Station', lat:42.352271, lng:-71.05524200000001},
+	{ sname:'Andrew', lat:42.330154, lng:-71.057655},
+	{ sname:'Porter Square', lat:42.3884, lng:-71.11914899999999},
+	{ sname:'Harvard Square', lat:42.373362, lng:-71.118956},
+	{ sname:'JFK/UMass', lat:42.320685, lng:-71.052391},
+	{ sname:'Savin Hill', lat:42.31129 , lng:-71.053331},
+	{ sname:'Park Street', lat:42.35639457 , lng:-71.0624242},
+	{ sname:'Broadway', lat:42.342622, lng:-71.056967},
+	{ sname:'North Quincy', lat:42.275275, lng:-71.029583},
+	{ sname:'Shawmut', lat:42.29312583, lng:-71.06573796000001},
+	{ sname:'Davis', lat:42.39674, lng:-71.121815},
+	{ sname:'Alewife', lat:42.395428, lng:-71.142483},
+	{ sname:'Kendall/MIT', lat:42.36249079, lng:-71.08617653},
+	{ sname:'Charles/MGH', lat:42.361166, lng:-71.070628},
+	{ sname:'Downtown Crossing', lat:42.355518, lng:-71.060225},
+	{ sname:'Quincy Center', lat:42.251809, lng:-71.005409},
+	{ sname:'Quincy Adams', lat:42.233391, lng:-71.007153},
+	{ sname:'Ashmont', lat:42.284652, lng:-71.06448899999999},
+	{ sname:'Wollaston', lat:42.2665139, lng:-71.0203369},
+	{ sname:'Fields Corner', lat:42.300093, lng:-71.061667},
+	{ sname:'Central Square', lat:42.365486, lng:-71.103802},
+	{ sname:'Braintree', lat:42.2078543, lng:-71.0011385}
 	];
+
+
 	/**
 		Getter function finds the lat,long data associated with a T-Stop name
 		Args: A station name 
@@ -102,7 +105,7 @@
 	function getStationObject (stationName) {
 
 		for (i = 0; i < RedLine.length; i++){
-			if (RedLine[i].name == stationName){
+			if (RedLine[i].sname == stationName){
 				return RedLine[i];
 			}
 		}
@@ -114,7 +117,7 @@
 	{
 		map = new google.maps.Map(document.getElementById("map"), myOptions);
 		getMyLocation();
-		console.log("lat is: " + getStationObject("Ashmont").lat + "long is: " + getStationObject("Ashmont").lng);
+
 	}
 			
 	function getMyLocation() {
@@ -130,19 +133,105 @@
 		}
 	}
 
+	var image = new google.maps.MarkerImage(
+  		'marker-images/image.png',
+ 		new google.maps.Size(15,15),
+  		new google.maps.Point(0,0),
+  		new google.maps.Point(8,15)
+	);
+	
+	var shadow = new google.maps.MarkerImage(
+  		'marker-images/shadow.png',
+  		new google.maps.Size(27,15),
+  		new google.maps.Point(0,0),
+  		new google.maps.Point(8,15)
+	);
+	function addMarker (locationName) {
+		//console.log("locationname is: " + locationName);
+		//console.log("lat is:" + getStationObject(locationName).lat + " long is:" + getStationObject(locationName).lng);
+		var marker = new google.maps.Marker({
+
+			
+			position : new google.maps.LatLng(getStationObject(locationName).lat, getStationObject(locationName).lng),
+			icon : image,
+			shadow : shadow,
+			map: map
+		});
+		marker.setMap(map);
+
+	}	
+	Array.prototype.min = function() {
+  		return Math.min.apply(null, this);
+	};
+
+	function meterstomiles(meters){
+		var miles = meters/1609.344;
+		miles = Math.ceil(miles);
+		return miles;
+	}
+	function findNearestStopFrom (){
+		var distances=[];
+		var tStop;
+		var temp;
+		var closestStop;
+		var min = google.maps.geometry.spherical.computeDistanceBetween(me, new google.maps.LatLng(RedLine[0].lat, RedLine[0].lng));
+		
+		for (i = 0; i < RedLine.length; i++){
+			tStop = new google.maps.LatLng(RedLine[i].lat, RedLine[i].lng);
+			temp = {distance: google.maps.geometry.spherical.computeDistanceBetween(me, tStop), tstop: RedLine[i].sname};
+			distances[i] = temp;
+
+			console.log("Distance is: " + temp.distance + "sname of that is: " + temp.tstop);	
+			
+			if (distances[i].distance < min){
+				min = distances[i].distance;
+				closestStop = distances[i];	
+				console.log("the new minimum is: " + distances[i].distance + "Name: " + distances[i].tstop);
+			}
+		}
+		closestStop.distance = meterstomiles(closestStop.distance);
+		
+		return closestStop;
+	}
+
 	function renderMap()
 	{
+		
+
 		me = new google.maps.LatLng(myLat, myLng);
+		var closeStation = findNearestStopFrom();
 				
 		// Update map and go there...
 		map.panTo(me);
+
+		for (i = 0; i < RedLine.length; i++){
+		//console.log("Station Name: " + RedLine[i].name + " lat is:" + getStationObject(RedLine[i].name).lat + " long is:" + getStationObject(RedLine[i].name).lng);
+		//console.log ("Passing in station name: " + RedLine[i].name);
+			addMarker(RedLine[i].sname);
+		}
 	
 		// Create a marker
 		marker = new google.maps.Marker({
 			position: me,
-			title: "Here I Am!"
+			title: "The closest MBTA Red Line station is " + closeStation.tstop 
+					+ " which is " + closeStation.distance + " mi away from" 
+					+ " your current location"
 		});
 		marker.setMap(map);
+
+		 var closeStationCoords = [
+          {lat: myLat, lng: myLng},
+          {lat: getStationObject(closeStation.tstop).lat, lng: getStationObject(closeStation.tstop).lng}
+        ];
+
+		var closeStationPath = new google.maps.Polyline({
+			path: closeStationCoords,
+			geodesic: true,
+			strokeColor: '#FF0000',
+			strokeOpacity: 1.0,
+			strokeWeight : 2.5
+	});
+
 					
 		// Open info window on click of marker
 		google.maps.event.addListener(marker, 'click', function() {
@@ -152,6 +241,7 @@
 		ashmontForkPath.setMap(map);
 		braintreeForkPath.setMap(map);
 		preForkPath.setMap(map);
+		closeStationPath.setMap(map);
 	}
 		
 
