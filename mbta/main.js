@@ -121,7 +121,6 @@
 		getMyLocation();
 		makeRequest();
 	
-
 	}
 			
 	function getMyLocation() {
@@ -156,7 +155,7 @@
 	function addMarker (locationName) {
 
 		var stopSchedule = makeSchedule (locationName);
-		var schedule = "";
+		var schedule = "Schedule for " + locationName + ": ";
 			for (i = 0; i < stopSchedule.length; i++) {
 				schedule = schedule + "Train to " + 
 				stopSchedule[i].destination + " is " + 
