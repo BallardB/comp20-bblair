@@ -3,6 +3,7 @@
 	var myLng = 0;
 	var request = new XMLHttpRequest();
 	var me = new google.maps.LatLng(myLat, myLng);
+	var mbtaURL = "https://rocky-taiga-26352.herokuapp.com/redline.json";
 
 	var myOptions = {
 		zoom: 12, // The larger the zoom number, the bigger the zoom	
@@ -12,6 +13,7 @@
 	var map;
 	var marker;
 	var infowindow = new google.maps.InfoWindow();
+	var results;
 
 	// Coords following Redline from Alewife to JFk/UMass
 	var preForkCoords = [
@@ -117,11 +119,13 @@
 	{
 		map = new google.maps.Map(document.getElementById("map"), myOptions);
 		getMyLocation();
+		makeRequest();
+	
 
 	}
 			
 	function getMyLocation() {
-		if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
+		if (navigator.geolocation) { 
 			navigator.geolocation.getCurrentPosition(function(position) {
 				myLat = position.coords.latitude;
 				myLng = position.coords.longitude;
@@ -146,16 +150,36 @@
   		new google.maps.Point(0,0),
   		new google.maps.Point(8,15)
 	);
-	function addMarker (locationName) {
-		//console.log("locationname is: " + locationName);
-		//console.log("lat is:" + getStationObject(locationName).lat + " long is:" + getStationObject(locationName).lng);
-		var marker = new google.maps.Marker({
 
-			
-			position : new google.maps.LatLng(getStationObject(locationName).lat, getStationObject(locationName).lng),
+	
+
+	function addMarker (locationName) {
+
+		var stopSchedule = makeSchedule (locationName);
+		var schedule = "";
+			for (i = 0; i < stopSchedule.length; i++) {
+				schedule = schedule + "Train to " + 
+				stopSchedule[i].destination + " is " + 
+				stopSchedule[i].seconds + " min away "
+			}
+
+
+
+		var marker = new google.maps.Marker({
+		 position : new google.maps.LatLng(getStationObject(locationName).lat,
+			 getStationObject(locationName).lng),
 			icon : image,
 			shadow : shadow,
 			map: map
+		});
+
+		var infowindow = new google.maps.InfoWindow ({
+			content: schedule
+				
+		});
+
+		marker.addListener('click', function() {
+			infowindow.open(map, marker);
 		});
 		marker.setMap(map);
 
@@ -174,19 +198,21 @@
 		var tStop;
 		var temp;
 		var closestStop;
-		var min = google.maps.geometry.spherical.computeDistanceBetween(me, new google.maps.LatLng(RedLine[0].lat, RedLine[0].lng));
+		var min = google.maps.geometry.spherical.computeDistanceBetween(me, 
+			      new google.maps.LatLng(RedLine[0].lat, RedLine[0].lng));
 		
 		for (i = 0; i < RedLine.length; i++){
 			tStop = new google.maps.LatLng(RedLine[i].lat, RedLine[i].lng);
-			temp = {distance: google.maps.geometry.spherical.computeDistanceBetween(me, tStop), tstop: RedLine[i].sname};
+			temp = {distance: google.maps.geometry.spherical.computeDistanceBetween(me, tStop),
+			         tstop: RedLine[i].sname};
 			distances[i] = temp;
 
-			console.log("Distance is: " + temp.distance + "sname of that is: " + temp.tstop);	
+			
 			
 			if (distances[i].distance < min){
 				min = distances[i].distance;
 				closestStop = distances[i];	
-				console.log("the new minimum is: " + distances[i].distance + "Name: " + distances[i].tstop);
+				
 			}
 		}
 		closestStop.distance = meterstomiles(closestStop.distance);
@@ -194,10 +220,63 @@
 		return closestStop;
 	}
 
+
+	function makeRequest () { 
+		
+		request = new XMLHttpRequest(), method = "GET", url = mbtaURL;
+		request.open(method, url);
+		request.onreadystatechange = processResults;
+		request.send();
+
+	}
+
+	var processResults = function(e) { 
+		
+		if (request.readyState == 4 && request.status == 200){
+			results = JSON.parse(this.responseText);
+			
+		}
+
+		if (request.status != 200) {
+			makeRequest();
+			alert("Please refresh page for live train data! Thanks :)");
+		}
+	};
+
+
+	function makeSchedule(locationName) {
+		var rawSchedule = [];
+		var stringSchedule = [];
+		var iterator = 0;
+		var schedule;
+		for (i = 0; i < results.TripList.Trips.length; i++){
+			for (j = 0; j < results.TripList.Trips[i].Predictions.length; j++){
+				if (results.TripList.Trips[i].Predictions[j].Stop == locationName){
+					rawSchedule[j] = {destination: results.TripList.Trips[i].Destination, 
+								seconds: results.TripList.Trips[i].Predictions[j].Seconds};
+				}
+			}
+		}
+		
+
+		for (k = 0; k < rawSchedule.length; k++) { 
+			if (rawSchedule[k] !== undefined) {
+				stringSchedule[iterator] = rawSchedule[k];
+				stringSchedule[iterator].seconds = 
+				            (stringSchedule[iterator].seconds/60).toPrecision(3);
+				
+				
+				schedule = 
+				iterator = iterator + 1;
+			}
+		}
+		return stringSchedule;
+	}
+
+
 	function renderMap()
 	{
 		
-
 		me = new google.maps.LatLng(myLat, myLng);
 		var closeStation = findNearestStopFrom();
 				
@@ -205,8 +284,6 @@
 		map.panTo(me);
 
 		for (i = 0; i < RedLine.length; i++){
-		//console.log("Station Name: " + RedLine[i].name + " lat is:" + getStationObject(RedLine[i].name).lat + " long is:" + getStationObject(RedLine[i].name).lng);
-		//console.log ("Passing in station name: " + RedLine[i].name);
 			addMarker(RedLine[i].sname);
 		}
 	
@@ -221,7 +298,8 @@
 
 		 var closeStationCoords = [
           {lat: myLat, lng: myLng},
-          {lat: getStationObject(closeStation.tstop).lat, lng: getStationObject(closeStation.tstop).lng}
+          {lat: getStationObject(closeStation.tstop).lat, 
+           lng: getStationObject(closeStation.tstop).lng}
         ];
 
 		var closeStationPath = new google.maps.Polyline({
@@ -242,6 +320,7 @@
 		braintreeForkPath.setMap(map);
 		preForkPath.setMap(map);
 		closeStationPath.setMap(map);
+			makeSchedule("Davis");
 	}
 		
 
