@@ -7,7 +7,45 @@
 	<title>Captain's Log</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script>
-	  // Your work will be done here...
+	
+
+		$(document).ready(function() {
+	 	
+	 	$('body').bind("enterKey", function(e){
+	 		console.log("yup you pressed it");
+	 		store();
+
+	 	});
+	 	$('body').keyup(function(e){
+	 		if(e.keyCode == 13){
+	 			$(this).trigger("enterKey");
+	 		}
+	 	});
+	 	function reload(){
+	 		elem = document.getElementById("log");
+	 		output = ""; 
+	 		for (key in localStorage) { 
+	 			output = output + "<p> Time: " + key + " " + 
+	 					 localStorage[key] + "<p>\n";
+	 		}
+	 		elem.innerHTML = output;
+	 	}
+
+
+	 	function store() {
+	 		txt = document.getElementById("msg").value;
+	 		// if (days < 10){
+	 		// 	days = '0' + days;
+	 		// }
+	 		// if (month < 10) {
+	 		// 	month = '0' + month;
+	 		// }
+	 		var today = new Date();
+	 		localStorage[today] = txt;
+	 		reload();
+	 	}
+	 	
+	 });
 	</script>
 </head>
 
