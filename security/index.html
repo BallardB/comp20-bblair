@@ -1,20 +1,73 @@
-1) XSS 
-2) wierd database injection 
-3) 
+<!DOCTYPE HTML>  
+
+<html>
+<head>
+	<title> Security Assessment </title>
+</head>
+<style type="text/css">
+	p {font-size: 20px;}
+	li {font-size: 18px;}
+	h1 {text-decoration: underline;}
+	h2 {text-decoration: underline;}
+</style>
+<body>
+
+	<h1> Introduction </h1>
+	<p> The product I was hired to asses the security of was my Comp20 classmate's 2048 Game Center
+		web page located <a href="https://twenty48.herokuapp.com/"> here.</a></p>  
+	<p> This site displays the scores from playing a modified version of the 2048 game which can be found <a href="https://twenty48.herokuapp.com/2048"> here.</a></p>
+	<p> The scoreboard displays all of the scores of gamers who have played the game. It also acts as an API. The web page has a GET request method with the path /scores.json?username='username'. This returns json data of all of the score information associated with that user name. </p>
+	
+	<h1> Methodology </h1>
+	<p> My methodology is to try and break my classmate's website in an epic fashion. I used the a modern web browser (Google Chrome) to continually access my classmate's site and the application <a href="https://www.getpostman.com/">Postman</a> to easily alter HTTP GET and POST parameters. </p>
+
+	<h1> Abstract of Findings </h1>
+	<p> The main issue with this web app is that the score and user name data is not secure in any way. The sites failure to validate user input allows a malicious programmer to insert all sorts of data in the database. For example, a user could insert a chunk of code so that whenever you access the site, it reroutes you to a different web site.</p>
+
+	<p>The site also does not prevent any data leakage. A malicious programmer with a simple command can see every piece of data in the database. </p>
+
+	<h1> Issues Found </h1>
+	<h2> Invalid Data </h2>
+	<ul>
+		<li>Issue - I was able to insert a photo into the database under the user name field.</li>
+		<li>Location - The /submit.json POST method.</li>
+		<li>Severity - Low to Medium. This issue is more of an annoyance and is just bad data being inserted into the database.</li>
+		<li>Description - The issue here is that there is no server side input validation for the user name field, it merely accepts any string. So using postman I was able to send an image tag in the user name field. </li><img src="postman1.png" style="width:1000px;height:300px;">
+		<li>Proof - Here is the 2048 Game Center after I sent two malicious POST requests.</li> <img src="image1.png" style="width:1000px;height:500px;">
+		<li>Resolution - One resolution would be to implement server side input validation for the user name field of the POST body.<br> 
+			Here is some example code that would sanitize user input: <br> <code>username = username.replace(/[^\w\s]/gi, '');</code></li>
+	</ul>
+
+	<h2> Cross Site Scripting Attacks </h2>
+	<ul>
+		<li>Issue - I was able to send a script tag in the user name field which has an alert window pop up.</li>
+		<li>Location - The /submit.json POST method.</li>
+		<li>Severity - High. This issue should not be taken lightly because it allows the hacker to control the web page and what the user sees.</li>
+		<li>Description - The issue here is that there is no server side input validation for the user name field, it merely accepts any string. So using postman I was able to send a script tag in the user name field.</li><img src="postman2.png" style="width:1000px;height:300px;">
+		<li>Proof - Here is the 2048 Game Center after I sent the malicious POST request.</li> <img src="image2.png" style="width:1200px;height:400px;">
+		<li>Resolution - One resolution would be to implement server side input validation for the user name field of the POST body.<br>
+			Here some example code that would handle the above security issues by sanitizing input before it is inserted into the database.<br> 
+			<code>username = username.replace(/[^\w\s]/gi, '');</code></li>
+	</ul>
+
+	<h2> Data Dump </h2>
+	<ul>
+		<li>Issue - I was able to have see every piece of data in the database </li>
+		<li>Location - The /scores.json GET method.</li>
+		<li>Severity - High. This issue should not be taken lightly because it allows the hacker to see every piece of data in the database thus exposing sensitive information.</li>
+		<li>Description - The issue here is that there is no server side sanitation for the query string parameters, it merely accepts any string. By simply altering the URL, I was able to see every piece of data.</li><img src="badurl.png" style="width:1300px;height:50px;">
+		<li>Proof - Here is the 2048 Game Center after I sent the malicious POST request.</li> <img src="datadump.png" style="width:1200px;height:500px;">
+		<li>Resolution - One resolution would be to sanitize the query string parameters in the GET request.<br> 
+			Here is some example code that sanitizes the username query paramater:<br> 
+			<code>username = request.query.username; <br>
+				username = username.replace(/[^\w\s]/gi, '')</code> </li>
+
+	</ul>
+
+	<h1> Conclusion </h1>
+	<p> In conclusion this code has many vulnerabilities from a security standpoint. The most important being that there is absolutely no user input sanitation. In the future this programmer should NOT trust user input to be correct. The cost of implementing changes on the server side code are extremely cheap, if at no cost at all. With a few simple lines of code similar to those listed above, no hacker will be able to inject memes, malicious javascript, or malicious data into this database. </p>
+
+</body>
+</html>
 
 
-Introduction - Provide a description of the product and what you were hired to do
-
-Methodology - Describe your methodology pen testing the application, including the tools that you used
-
-Abstract of Findings - Provide an overview of all the security and privacy issues you identified. This section should be written for non-technical managers who do not have technical expertise and do not have time to read the entire document. Write this section using lay language.
-
-Issues Found - For each issue that you find, document:
-Issue (e.g., database injection, really bad programming practice)
-Location / page where issue was found
-Severity of issue (e.g., low, medium , or high). Justify your answer.
-Description of issue. How did you find it? A screenshot of problem is excellent.
-Proof of vulnerability. Show pictures.
-Resolution. Make recommendation(s) on how issue can be resolved. Show code if possible.
-
-Conclusion - You can also list future considerations and recommendations with costs.
