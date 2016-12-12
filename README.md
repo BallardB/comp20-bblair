@@ -20,4 +20,4 @@ What was the most important thing that you learned in this course? Cite two exam
 
 Now that you have finished the course, what topic would you like to delve deeper into?
 - I want to delve deeper into web programming in every aspect!! I want to learn more about backend and server code and really exploring 
-  the dynamic web page possibilities that come with server side development. I also want to try out mobile development to make more interesting apps!  
+  the dynamic web page possibilities that come with server side development. I also want to try out mobile development to make fun and interesting apps!  
