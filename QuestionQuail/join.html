@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.png">
+
+    <title>Question Quail</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+        <!-- Link to font -->
+    <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="navbar.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+   <body onload="getGameCode()">
+
+    <div class="container">
+
+      <!-- Static navbar -->
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Question Quail</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="about.html">About</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+
+        <h1> Join an existing Question Quail game! </h1>
+        <h3 id = "message"> Enter your name and your Game Code below, Quail! </h3>
+        <br>
+        <form>
+          <div class="form-group">
+            <span> Username <span/>
+            <input class="form-control" type="text" class="form-control" id="userID" value="" placeholder="My name is..." onfocus="if (this.value=='My name is...') this.value='';">
+          </div>
+          <div class="form-group">
+            <span> Game Code  </span>
+            <input  class="form-control" type="text" class="form-control" id="gameID" value="" placeholder="My code is..." onfocus="if (this.value=='My code is...') this.value='';">
+          </div>
+        </form>
+        <button type="submit" class="btn btn-lg btn-info" onclick="postJoin()">Join Now!</button>
+        <br>
+        <br>
+        <p id ="needacode"> Need a code for your group? <a href = "create.html">
+            Be the group leader! </a> </p>
+      </div> <!-- /jumbotron -->
+    </div> <!-- /container -->
+
+    <script>
+        function postJoin () {
+            // Validate
+            if (!checkForUsername()) return;
+            if (!checkValidCode()) return;
+
+            // Grab user ID and make an object for to post
+            var userID = document.getElementById("userID").value;
+            var gameID = document.getElementById("gameID").value;
+            var body = {
+                "gameCode"  : gameID,
+                "userId"    : userID,
+            };
+
+
+            // TODO: post to server
+            // TODO: validate
+            //   -> check if gamecode is valid
+            $.post ("https://questionquail.herokuapp.com/userjoin", body, null, "application/json");
+
+            // Locally store ID's
+            localStorage.setItem("userID", userID);
+            localStorage.setItem("gameID", gameID);
+
+            console.log("About to redirect");
+            console.log("Posted username: " + userID);
+            // window.location = "index.html";
+            window.location = "waiting_scoreboard.html";
+            console.log("Justredirected");
+
+        }
+
+        // for getting a passed-in code from a query string
+        function getGameCode() {
+            var gameCode = qs("gameCode");
+            console.log("Game code is " + gameCode);
+
+            if (gameCode != "") 
+                document.getElementById("gameID").value = gameCode;
+        }
+
+        // Taken from StackOverflow to search for a value in a qs, takes qs key
+        function qs(search_for) {
+            var query = window.location.search.substring(1);
+            var parms = query.split('&');
+            for (var i=0; i<parms.length; i++) {
+                var pos = parms[i].indexOf('=');
+                if (pos > 0  && search_for == parms[i].substring(0,pos)) {
+                    return parms[i].substring(pos+1);;
+                }
+            }
+            return "";
+        }
+
+        function checkForUsername() {
+            var userID = document.getElementById("userID").value;
+
+            if (userID == null || userID == "") {
+                window.alert("Please enter a username first!");
+                return false;
+            } else return true;
+        }
+
+        function checkValidCode() {
+            var gameCode = document.getElementById("gameID").value;
+
+            if (gameCode == null || userID == "") {
+                window.alert("Please enter a game code!");
+                return false;
+            } 
+            // else if {
+            //     // TODO: ask DB if code is valid
+            // }
+            else return true;
+        }
+    </script>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

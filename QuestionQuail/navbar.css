@@ -1,0 +1,99 @@
+body {
+  font-family: 'Quicksand', sans-serif;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+h3 {
+    color: #449DD1;
+}
+
+.navbar {
+  margin-bottom: 20px;
+  background-color: #FCEADE;
+}
+
+.jumbotron {
+  background-color: #FCEADE;
+}
+
+.btn:hover {
+    background-color: white;
+    color: #449DD1;
+}
+.btn {
+    background-color: #449DD1; 
+    border-color: #449DD1;
+    -webkit-transition-duration: 2s; /* Safari */
+    transition-duration: 2s;
+    font-size:18pt;
+}
+
+table tr{
+    font-size: 18pt;
+    border-bottom: 1px solid lightgray;
+} table tr:last-child { 
+    border-bottom: none; 
+}
+
+#numQuails {
+    color: #449DD1;
+    font-size: 60pt;
+}
+
+#winner, #questionHere {
+    color: #449DD1;
+}
+
+.form-group {
+  width: 75%;
+  font-size: 18pt;
+}
+
+.form-control, input {
+  padding: 30px 30px;
+  width: 85%;
+  font-size: 16pt;
+}
+
+#welcome {
+  text-align: center;
+}
+
+h1 .blue {
+  color: #449DD1;
+  font-weight: bold;
+}
+
+.name {
+  -webkit-transition-duration: 2s; /* Safari */
+  transition-duration: 2s;
+}
+.name:hover {
+  color: #449DD1
+}
+.name a:hover, .name a {
+  color:inherit;
+  text-decoration: none;
+}
+
+input.radio {
+/*  float: left;
+  clear: none;*/
+  margin: 4px 4px 4px 4px;
+
+}
+
+input.answer {
+  width: auto;
+  vertical-align: middle;
+  margin: 10px 10px 10px 10px;
+}
+
+#AnswersHere {
+    color: #449DD1;
+    font-size: 20pt;
+}
+
+
+

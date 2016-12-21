@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.png">
+
+    <title>Question Quail</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Link to font -->
+    <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="navbar.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <!-- Static navbar -->
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Question Quail</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="about.html">About</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+            
+        <h1> Ask a question! </h1>
+        <h2> It can be anything! </h2>
+        <br>
+        <form> <input type="text" id="Question" name="Question" placeholder="What is Ballard's mom's favorite cheese?" onkeydown="if (event.keyCode == 13)return false;"/></form> 
+        <br>
+        <button type="button" class="btn btn-lg btn-info" onclick="submitQ()">Submit your question, quail!</button> 
+        <!-- TODO: make the form bigger -->
+        <!-- TODO: when submit is pressed: submit q to db, redir to waiting page, with query strings for gameID and username  -->
+        <!-- TODO: timer here -->
+      </div> <!-- /jumbotron -->
+    </div> <!-- /container -->
+
+   
+    <script>
+      // Adjust size of input to match placeholder (from http://stackoverflow.com/questions/17302794/how-to-set-an-input-width-to-match-the-placeholder-text-width)
+      var input = document.querySelectorAll('input');
+      for(i=0; i<input.length; i++){
+          input[i].setAttribute('size',input[i].getAttribute('placeholder').length);
+      }
+
+      function submitQ() {
+
+        var q = document.getElementById("Question").value;
+        console.log ("Question is : " + q);
+
+        // Get gameID and userID from local store
+        var userID = localStorage.getItem("userID");
+        var gameID =  localStorage.getItem("gameID");
+
+        // Post
+        var body = {
+          "gameCode":   gameID,
+          "userId":     userID,
+          "question":   q,
+        }
+        $.post ("https://questionquail.herokuapp.com/addq", body, null, "application/json");
+
+        // redirect to waiting page
+        window.location = "wait_answer_master.html";
+      }
+    </script>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

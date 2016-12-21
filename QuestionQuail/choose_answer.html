@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.png">
+
+    <title>Question Quail</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Link to font -->
+    <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="navbar.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body onload = "init()">
+
+    <div class="container">
+
+      <!-- Static navbar -->
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Question Quail</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="about.html">About</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+
+        <h1> Pick your favorite answer! </h1>
+        <br> 
+        <br> 
+        <div id="AnswersHere"></div>
+<!--         <form id = "Answers">
+        </form> -->
+        <br>
+        <button id="submit" class="btn btn-lg btn-info" onclick="submitChoice()"> Submit your choice! </button>
+
+        <!-- <button class="btn btn-lg btn-info" onClick="location.href = 'create.html';" id="createButton" style="font-size:30pt"> Create a New Game! </button> -->
+      </div> <!-- /jumbotron -->
+    </div> <!-- /container -->
+
+
+
+
+  <script>
+
+    function init() {
+        fillAnswers();
+        // var answersList = fillAnswers();
+        // document.getElementById("AnswersHere").innerHTML = answersList;
+    }
+
+    function fillAnswers(){
+        // TODO: add correct number of answers and put in each player's answers
+        // TODO: query db for all answers
+        // var numAnswers = 1;
+        
+        // Get questions
+        var userID =  localStorage.getItem("userID");
+        var gameID =  localStorage.getItem("gameID");
+        var body = {
+          "gameCode": gameID
+        }
+        // var answers = "<div class='form-group'>";
+        var answers = "<form>";
+        $.getJSON ("https://questionquail.herokuapp.com/userScores", body, parseQuestions);
+
+        // Dang asynchronous callback
+        function parseQuestions(json) {
+            for (var i in json){
+              if (json[i]["name"] != userID) {
+                  answers += "<input type='radio' class='answer' value= '" + json[i]["name"] + "'>" + "Answer: " + 
+                          json[i]["answer"] + ", from " + json[i]["name"] + "</input> <br>";  
+              }
+            }
+            // answers += "</div>";
+            answers += "</form>";
+            console.log(answers);
+            document.getElementById("AnswersHere").innerHTML = answers;
+            // document.getElementById("AnswersHere").innerHTML = "HI" + "<input type='radio' id='answer'>Answer: nullfrom bb1</input><input type='radio' id='answer>Answer: OH SHTfrom bb2</input>";
+            // return answers;       
+        }
+        // return answers;
+        // return allAnswers
+    }
+    function submitChoice() {
+
+        // Find selected answer
+        var AnswForm = document.forms[0];
+        var usr;
+        for (var k in AnswForm) {
+          if (AnswForm[k].checked) {
+              usr = AnswForm[k].value;
+              break;
+          }
+        }
+        console.log ("I choose: " + usr);
+
+        var gameID =  localStorage.getItem("gameID");
+
+        // TODO: post result to server
+        var body = {
+          "gameCode": gameID,
+          "userId": usr,
+        }
+        $.post ("https://questionquail.herokuapp.com/selectwinner", body, null, "application/json");
+
+        // redirect to scoreboard waiting page
+        window.location = "waiting_scoreboard.html";
+    }
+        
+  </script>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

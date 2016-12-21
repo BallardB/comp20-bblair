@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.png">
+
+    <title>Question Quail</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Link to font -->
+    <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="navbar.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <!-- Static navbar -->
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Question Quail</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="about.html">About</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <h1> Welcome! </h1>
+        <h2> Let's create a Question Quail game! </h2>
+        <br>
+        <h3 >Please enter a username as the game-master!</h3>
+        <div class="form-group">
+          <input class="form-control" type="text" id="userID" value="" placeholder="Username" onkeydown="if (event.keyCode == 13)return false;">
+        </div>
+        <br>
+        <div class=inline> <h3> Your code is: </h3>
+          <h2><span id ="code"> </span></h2>  
+        </div>
+        <br>
+        <div id ="qr"> </div>
+        <br>
+
+        <h4 id = "share"> Share your code with friends to start your game! </h4>
+        <h4> <a id =sms href="#" onclick="sendSMS();return false;" > Playing with friends far away? Send your game code via SMS! </a> </h4>
+        <br>
+
+    <!-- TODO: redirect with query string of username and gameID -->
+        <p>Once you've shared your code, click 'Next' and wait for your quails to join!</p>
+        <button class="btn btn-lg btn-info" id="createButton" style="font-size:30pt; padding-left: 80px; padding-right: 80px;" onclick="postStart()">Next</button>
+
+            <!-- <button class="btn btn-lg btn-info" onClick="location.href = 'create.html';" id="createButton" style="font-size:30pt"> Create a New Game! </button> -->
+      </div> <!-- /jumbotron -->
+    </div> <!-- /container -->
+
+    <script>
+    var userID;
+    var code = Math.random();   // aka gameID
+    var URL = "https://questionquail.herokuapp.com/codes";
+    code *= 100000000;
+    code = Math.round(code);
+    document.getElementById("code").innerHTML = code;
+    var QRurl = "https://api.qrserver.com/v1/create-qr-code/?data=https://questionquail.herokuapp.com/join.html?gameCode=" + code ;
+    document.getElementById("qr").innerHTML =
+    "<img src = " + QRurl + " alt='' title='' style='width:165px;height:165px;'/>";
+
+    function postStart () {
+
+        if (!checkForUsername()) return;
+
+        // Grab user ID and make an object for to post
+        userID = document.getElementById("userID").value;
+
+        // Locally store ID's
+        localStorage.setItem("userID", userID);
+        localStorage.setItem("gameID", code);
+
+        // // Testing local storage retrieval
+        // console.log("Posting username: "  + localStorage.getItem("userID"));
+        // console.log("Posting game code: " + localStorage.getItem("gameID"));
+
+        var body = {
+            "gameCode"  : code,
+            "userId"    : userID,
+        };
+
+        // Post new user data to server
+        // TODO validate
+        $.post ("https://questionquail.herokuapp.com/gmcreate", body, null, "application/json");
+        // .fail(function( jqXHR, textStatus, errorThrown) {
+        //     alert( "error! " + textStatus + " " + errorThrown );
+        //     console.log( "error! " + textStatus , " " , errorThrown , jqXHR);
+        // });
+              // });
+        console.log("Posted " + body);
+        // Redirect to waiting-to-start page
+        window.location = "wait_start_master.html";
+    }
+
+    function sendSMS() {
+
+        if (!checkForUsername()) return;
+
+        userID = document.getElementById("userID").value;
+        var num  = window.prompt("Enter your friend's 10-digit phone number!","");
+        var joinURL = "https://questionquail.herokuapp.com/join.html?gameCode=" + code;
+
+        if (num == null || num == ""){
+            window.alert("You didn't want to send a code? :(");
+        }
+        else {
+            var numParsed = num.replace(/[^0-9]/g, '');   // remove special characters
+            if(numParsed.toString().length != 10) {
+                window.alert(num + " isn't a valid phone number!");
+            }
+            else {
+                var data = {
+                "number"  : numParsed,
+                "message" : (userID + " invited you to play QuestionQual! " +
+                             "Your code is " + code + ". Go to " + joinURL +
+                             " to play!")
+                };
+            }
+        }
+        $.post ("https://textbelt.com/text", data, null, "application/json");
+    }
+
+    function checkForUsername() {
+        var userID = document.getElementById("userID").value;
+
+        if (userID == null || userID == "") {
+            window.alert("Please enter a username first!");
+            return false;
+        } else return true;
+    }
+    </script>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>
